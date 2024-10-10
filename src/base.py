@@ -15,7 +15,13 @@ print(f"\r加载模型...", end="", flush=True)
 
 # 初始化Bert模型和tokenizer
 start = time.time()
-device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+if(torch.backends.mps.is_available()) :
+  device = torch.device("mps")
+elif(torch.cuda.is_available()):
+  device = torch.device("cuda")
+else:
+  device = torch.device("cpu")
+# device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 tokenizer = BertTokenizer.from_pretrained("./model")
 model = BertModel.from_pretrained("./model").to(device)
 model.eval()
@@ -72,7 +78,7 @@ def answer_question(user_input):
   # print("计算相似度:", end - start, "seconds")
 
   best_match_index = np.argmax(similarities)
-  if(similarities[best_match_index] < 0.8):
+  if(similarities[best_match_index] < config['noAnswerThreshold']):
     return config['noAnswerReply']
   best_answer = question_list[best_match_index]["answer"]
   return best_answer
