@@ -65,7 +65,7 @@ def answer_question(user_input):
   end = time.time()
   # print("用户输入向量化:",user_input,":", end - start, "seconds")
 
-  start = time.time()
+  # start = time.time()
   # 计算输入文本与每个问题组的问题的相似度
   similarities = []
   for vectors in question_vectors:
@@ -74,8 +74,8 @@ def answer_question(user_input):
       similarities.append(max_similarity)
   # similarities = torch.nn.functional.cosine_similarity(user_vector, question_vectors_base, dim=1).cpu().numpy()
 
-  end = time.time()
-  # print("计算相似度:", end - start, "seconds")
+  # end = time.time()
+  print("计算相似度:", end - start, "seconds")
 
   best_match_index = np.argmax(similarities)
   if(similarities[best_match_index] < config['noAnswerThreshold']):
