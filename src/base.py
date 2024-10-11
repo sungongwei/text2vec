@@ -65,7 +65,7 @@ def answer_question(user_input):
         user_vector = torch.mean(user_outputs.last_hidden_state, dim=1).cpu().numpy()
 
     start = time.time()
-
+    print(start)
     D, I = index_with_ids.search(np.vstack(user_vector), 1)
     end = time.time()
     similar = 1 - D[0][0] / d
