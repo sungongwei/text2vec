@@ -4,6 +4,7 @@ import numpy as np
 import json
 import time
 import faiss
+import os
 from src.read_data import merge_json_files
 
 # 打开 JSON 文件并读取数据
@@ -31,29 +32,47 @@ print("\n加载模型完成:", end - start, "seconds")
 
 
 d = 768
-index = faiss.IndexFlatL2(d)
-index_with_ids = faiss.IndexIDMap(index)
-# 1. 准备数据
-# 2. 对问题进行编码和向量化
-start = time.time()
-question_length = len(question_list)
-for index, questions in enumerate(question_list):
-    vectors = []
-    print(f"\r向量化: {index+1}/{question_length}", end="", flush=True)
-    for question in questions["question"]:
-        inputs = tokenizer(
-            question, return_tensors="pt", max_length=512, padding=True, truncation=True
-        ).to(device)
-        with torch.no_grad():
-            outputs = model(**inputs)
-            vector = torch.mean(outputs.last_hidden_state, dim=1).cpu().numpy()
-            vectors.append(vector)
-    index_with_ids.add_with_ids(np.vstack(vectors), np.full(len(vectors), index))
-end = time.time()
 
-print("\n向量化:", end - start, "seconds")
+def vectorize():
+    index = faiss.IndexFlatL2(d)
+    index_with_ids = faiss.IndexIDMap(index)
+    # 1. 准备数据
+    # 2. 对问题进行编码和向量化
+    start = time.time()
+    question_length = len(question_list)
+    for idx, questions in enumerate(question_list):
+        vectors = []
+        print(f"\r向量化: {idx+1}/{question_length}", end="", flush=True)
+        for question in questions["question"]:
+            inputs = tokenizer(
+                question, return_tensors="pt", max_length=512, padding=True, truncation=True
+            ).to(device)
+            with torch.no_grad():
+                outputs = model(**inputs)
+                vector = torch.mean(outputs.last_hidden_state, dim=1).cpu().numpy()
+                vectors.append(vector)
+        index_with_ids.add_with_ids(np.vstack(vectors), np.full(len(vectors), idx))
+    end = time.time()
 
-print(index_with_ids.ntotal)
+    print("\n向量化:", end - start, "seconds")
+
+    print(index_with_ids.ntotal)
+    return index_with_ids
+  
+
+index_path = "faiss.index"
+# 检查索引文件是否存在
+if os.path.exists(index_path):
+    # 如果文件存在，则加载本地索引
+    print("Loading index from file...")
+    index_with_ids = faiss.read_index(index_path)
+else:
+    # 如果文件不存在，则创建一个新的索引
+    print("Creating a new index...")
+    index_with_ids = vectorize()
+    print("Saving index to file...")
+    faiss.write_index(index_with_ids, index_path)
+
 
 
 def answer_question(user_input):
@@ -65,10 +84,10 @@ def answer_question(user_input):
         user_vector = torch.mean(user_outputs.last_hidden_state, dim=1).cpu().numpy()
 
     start = time.time()
-    print(start)
-    D, I = index_with_ids.search(np.vstack(user_vector), 1)
+    best_distance, best_index = index_with_ids.search(np.vstack(user_vector), 1)
     end = time.time()
-    similar = 1 - D[0][0] / d
+    similar = round(1 - best_distance[0][0] / d, 4)
+    print(similar,f"{end-start:.4f}")
     if similar < config["noAnswerThreshold"]:
         return config["noAnswerReply"]
-    return question_list[I[0][0]]["answer"]
+    return question_list[best_index[0][0]]["answer"]

@@ -1,6 +1,5 @@
 from flask import Flask, request, jsonify
 from src.base import answer_question
-
 app = Flask(__name__)
 
 @app.route('/q/<q>')

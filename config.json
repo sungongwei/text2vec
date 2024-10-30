@@ -1,4 +1,4 @@
 {
-  "noAnswerThreshold": 0.8,
+  "noAnswerThreshold": 0.75,
   "noAnswerReply":"抱歉，这个问题我还不太懂"
 }

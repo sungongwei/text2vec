@@ -2,7 +2,7 @@
 
 ## model
 
-git clone https://huggingface.co/shibing624/text2vec-base-chinese  model   
+git clone https://www.modelscope.cn/Jerry0/text2vec-base-chinese.git  model   
 
 
 ## data
