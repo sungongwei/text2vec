@@ -17,13 +17,13 @@ print(f"\r加载模型...", end="", flush=True)
 
 # 初始化Bert模型和tokenizer
 start = time.time()
-if torch.backends.mps.is_available():
-    device = torch.device("mps")
-elif torch.cuda.is_available():
-    device = torch.device("cuda")
-else:
-    device = torch.device("cpu")
-# device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+# if torch.backends.mps.is_available():
+#     device = torch.device("mps")
+# elif torch.cuda.is_available():
+#     device = torch.device("cuda")
+# else:
+#     device = torch.device("cpu")
+device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 tokenizer = BertTokenizer.from_pretrained("./model")
 model = BertModel.from_pretrained("./model").to(device)
 model.eval()
@@ -32,6 +32,7 @@ print("\n加载模型完成:", end - start, "seconds")
 
 
 d = 768
+
 
 def vectorize():
     index = faiss.IndexFlatL2(d)
@@ -45,7 +46,11 @@ def vectorize():
         print(f"\r向量化: {idx+1}/{question_length}", end="", flush=True)
         for question in questions["question"]:
             inputs = tokenizer(
-                question, return_tensors="pt", max_length=512, padding=True, truncation=True
+                question,
+                return_tensors="pt",
+                max_length=512,
+                padding=True,
+                truncation=True,
             ).to(device)
             with torch.no_grad():
                 outputs = model(**inputs)
@@ -58,7 +63,7 @@ def vectorize():
 
     print(index_with_ids.ntotal)
     return index_with_ids
-  
+
 
 index_path = "faiss.index"
 # 检查索引文件是否存在
@@ -74,20 +79,20 @@ else:
     faiss.write_index(index_with_ids, index_path)
 
 
-
 def answer_question(user_input):
+    start = time.time()
     user_inputs = tokenizer(
         user_input, return_tensors="pt", max_length=512, padding=True, truncation=True
     ).to(device)
     with torch.no_grad():
         user_outputs = model(**user_inputs)
         user_vector = torch.mean(user_outputs.last_hidden_state, dim=1).cpu().numpy()
+    end1 = time.time()
 
-    start = time.time()
     best_distance, best_index = index_with_ids.search(np.vstack(user_vector), 1)
     end = time.time()
     similar = round(1 - best_distance[0][0] / d, 4)
-    print(similar,f"{end-start:.4f}")
+    print(similar, f"{end1-start:.4f}", f"{end-end1:.4f}")
     if similar < config["noAnswerThreshold"]:
         return config["noAnswerReply"]
     return question_list[best_index[0][0]]["answer"]
