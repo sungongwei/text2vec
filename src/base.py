@@ -17,13 +17,13 @@ print(f"\r加载模型...", end="", flush=True)
 
 # 初始化Bert模型和tokenizer
 start = time.time()
-# if torch.backends.mps.is_available():
-#     device = torch.device("mps")
-# elif torch.cuda.is_available():
-#     device = torch.device("cuda")
-# else:
-#     device = torch.device("cpu")
-device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+if torch.backends.mps.is_available():
+    device = torch.device("mps")
+elif torch.cuda.is_available():
+    device = torch.device("cuda")
+else:
+    device = torch.device("cpu")
+# device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 tokenizer = BertTokenizer.from_pretrained("./model")
 model = BertModel.from_pretrained("./model").to(device)
 model.eval()
@@ -78,7 +78,8 @@ else:
     print("Saving index to file...")
     faiss.write_index(index_with_ids, index_path)
 
-
+def cal_token(text):
+    return len(tokenizer.tokenize(text))
 def answer_question(user_input):
     start = time.time()
     user_inputs = tokenizer(
