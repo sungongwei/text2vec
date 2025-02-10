@@ -77,7 +77,8 @@ else:
     index_with_ids = vectorize()
     print("Saving index to file...")
     faiss.write_index(index_with_ids, index_path)
-
+def cal_token(text):
+    return len(tokenizer.tokenize(text))
 
 def answer_question(user_input):
     start = time.time()
