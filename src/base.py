@@ -5,15 +5,18 @@ import json
 import time
 import faiss
 import os
+import logging
+
 from src.read_data import merge_json_files
+logging.basicConfig(level=logging.DEBUG,
+                    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 
 # 打开 JSON 文件并读取数据
 with open("config.json") as f:
     config = json.load(f)
 question_list = merge_json_files("./data")
 
-
-print(f"\r加载模型...", end="", flush=True)
+logging.info(f"加载模型...")
 
 # 初始化Bert模型和tokenizer
 start = time.time()
@@ -28,11 +31,15 @@ tokenizer = BertTokenizer.from_pretrained("./model")
 model = BertModel.from_pretrained("./model").to(device)
 model.eval()
 end = time.time()
-print("\n加载模型完成:", end - start, "seconds")
+logging.info("加载模型完成:{}".format(end - start))
 
 
 d = 768
+def cal_token(text):
+    return len(tokenizer.tokenize(text))
 
+def cal_similarity(distance):
+    return  round(1 - distance / d, 4)
 
 def vectorize():
     index = faiss.IndexFlatL2(d)
@@ -41,9 +48,10 @@ def vectorize():
     # 2. 对问题进行编码和向量化
     start = time.time()
     question_length = len(question_list)
+    
     for idx, questions in enumerate(question_list):
         vectors = []
-        print(f"\r向量化: {idx+1}/{question_length}", end="", flush=True)
+        logging.info(f"向量化: {idx+1}/{question_length}")
         for question in questions["question"]:
             inputs = tokenizer(
                 question,
@@ -56,12 +64,17 @@ def vectorize():
                 outputs = model(**inputs)
                 vector = torch.mean(outputs.last_hidden_state, dim=1).cpu().numpy()
                 vectors.append(vector)
+        min_distance, index = index_with_ids.search(np.vstack(vectors), 1)
+        if cal_similarity(min_distance[0][0]) > 0.5:
+          logging.error(f"太过相似: {cal_similarity(min_distance[0][0])}:{index[0][0]}:{question}:{question_list[index[0][0]]['question'][0]}")
         index_with_ids.add_with_ids(np.vstack(vectors), np.full(len(vectors), idx))
+        
+        
     end = time.time()
 
-    print("\n向量化:", end - start, "seconds")
+    logging.info("\n向量化:{} seconds".format(end - start))
 
-    print(index_with_ids.ntotal)
+    logging.info(index_with_ids.ntotal)
     return index_with_ids
 
 
@@ -69,31 +82,41 @@ index_path = "faiss.index"
 # 检查索引文件是否存在
 if os.path.exists(index_path):
     # 如果文件存在，则加载本地索引
-    print("Loading index from file...")
+    logging.info("Loading index from file...")
     index_with_ids = faiss.read_index(index_path)
 else:
     # 如果文件不存在，则创建一个新的索引
-    print("Creating a new index...")
+    logging.info("Creating a new index...")
     index_with_ids = vectorize()
-    print("Saving index to file...")
+    logging.info("Saving index to file...")
     faiss.write_index(index_with_ids, index_path)
 
-def cal_token(text):
-    return len(tokenizer.tokenize(text))
+
+def similarity_to_distance(similar):
+    return d * (1 - similar)
 def answer_question(user_input):
     start = time.time()
     user_inputs = tokenizer(
         user_input, return_tensors="pt", max_length=512, padding=True, truncation=True
     ).to(device)
+    # logging.info("向量化:{} seconds".format(user_inputs))
     with torch.no_grad():
         user_outputs = model(**user_inputs)
+        # logging.info("向量化:{} seconds".format(user_outputs))
         user_vector = torch.mean(user_outputs.last_hidden_state, dim=1).cpu().numpy()
+        # logging.info("向量化:{} seconds".format(user_vector.flatten()))
+        
     end1 = time.time()
 
     best_distance, best_index = index_with_ids.search(np.vstack(user_vector), 1)
+    # for(distance, index) in zip(best_distance[0], best_index[0]):
+    #     logging.info(f"搜索: {cal_similarity(distance)}:{index}")
     end = time.time()
-    similar = round(1 - best_distance[0][0] / d, 4)
-    print(similar, f"{end1-start:.4f}", f"{end-end1:.4f}")
+    similar =cal_similarity(best_distance[0][0])
+    res = ""
     if similar < config["noAnswerThreshold"]:
-        return config["noAnswerReply"]
-    return question_list[best_index[0][0]]["answer"]
+        res = config["noAnswerReply"]
+    else:
+        res = question_list[best_index[0][0]]["answer"]
+    logging.info('<q>{}<q>{}<q>{}'.format(similar,user_input,res))
+    return res

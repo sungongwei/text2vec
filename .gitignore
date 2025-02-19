@@ -3,3 +3,7 @@ assets/
 model/
 *.log
 logs/
+
+model*
+base_model
+fastchat-cp39

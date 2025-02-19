@@ -1,7 +1,7 @@
 # 关闭程序
-fileName=openai.py
+fileName=openai:app
 pid=$(ps -ef | grep $fileName| grep -v "grep" | awk '{print $2}')
 kill -9 $pid
 
 # 启动项目
-nohup python $fileName  >> fastchat.log &
+gunicorn --workers 8 openai:app &

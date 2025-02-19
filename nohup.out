@@ -1,0 +1,105 @@
+加载模型...
+加载模型完成: 0.8532779216766357 seconds
+Loading index from file...
+ * Serving Flask app 'openai'
+ * Debug mode: off
+[31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:8000
+ * Running on http://192.168.31.104:8000
+[33mPress CTRL+C to quit[0m
+192.168.31.104 - - [17/Feb/2025 17:10:01] "POST /v1/chat/completions HTTP/1.1" 200 -
+192.168.31.104 - - [17/Feb/2025 17:10:01] "POST /v1/chat/completions HTTP/1.1" 200 -
+加载模型...
+加载模型完成: 0.7988622188568115 seconds
+Loading index from file...
+ * Serving Flask app 'openai'
+ * Debug mode: on
+[31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:8000
+ * Running on http://192.168.31.104:8000
+[33mPress CTRL+C to quit[0m
+ * Restarting with stat
+加载模型... * Debugger is active!
+ * Debugger PIN: 383-682-614
+192.168.31.104 - - [17/Feb/2025 17:11:06] "POST /v1/chat/completions HTTP/1.1" 200 -
+192.168.31.104 - - [17/Feb/2025 17:11:08] "POST /v1/chat/completions HTTP/1.1" 200 -
+192.168.31.104 - - [17/Feb/2025 17:11:09] "POST /v1/chat/completions HTTP/1.1" 200 -
+ * Detected change in '/Users/sgw/Documents/zeta/llm/vector/src/base.py', reloading
+
+加载模型完成: 0.5771701335906982 seconds
+Loading index from file...
+<t>0.7885<t>共享平台如何使用<t>暂无法处理您的问题，请联系人工客服进行咨询。
+<t>0.7885<t>共享平台如何使用<t>暂无法处理您的问题，请联系人工客服进行咨询。
+<t>0.7885<t>共享平台如何使用<t>暂无法处理您的问题，请联系人工客服进行咨询。
+ * Restarting with stat
+加载模型... * Debugger is active!
+ * Debugger PIN: 383-682-614
+/opt/homebrew/Caskroom/miniforge/base/envs/py311/lib/python3.11/multiprocessing/resource_tracker.py:254: UserWarning: resource_tracker: There appear to be 1 leaked semaphore objects to clean up at shutdown
+  warnings.warn('resource_tracker: There appear to be %d '
+/opt/homebrew/Caskroom/miniforge/base/envs/py311/lib/python3.11/multiprocessing/resource_tracker.py:254: UserWarning: resource_tracker: There appear to be 1 leaked semaphore objects to clean up at shutdown
+  warnings.warn('resource_tracker: There appear to be %d '
+加载模型...
+加载模型完成: 0.2511720657348633 seconds
+Loading index from file...
+ * Serving Flask app 'openai'
+ * Debug mode: on
+[31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:8000
+ * Running on http://192.168.31.104:8000
+[33mPress CTRL+C to quit[0m
+ * Restarting with stat
+加载模型... * Debugger is active!
+ * Debugger PIN: 383-682-614
+
+加载模型完成: 0.4744079113006592 seconds
+Loading index from file...
+相似度: 0.7885192.168.31.104 - - [17/Feb/2025 17:12:32] "POST /v1/chat/completions HTTP/1.1" 200 -
+<t>0.7885<t>共享平台如何使用<t>暂无法处理您的问题，请联系人工客服进行咨询。
+相似度: 0.7885192.168.31.104 - - [17/Feb/2025 17:12:37] "POST /v1/chat/completions HTTP/1.1" 200 -
+<t>0.7885<t>共享平台如何使用<t>暂无法处理您的问题，请联系人工客服进行咨询。
+相似度: 0.7885192.168.31.104 - - [17/Feb/2025 17:12:38] "POST /v1/chat/completions HTTP/1.1" 200 -
+<t>0.7885<t>共享平台如何使用<t>暂无法处理您的问题，请联系人工客服进行咨询。
+相似度: 0.7885192.168.31.104 - - [17/Feb/2025 17:12:39] "POST /v1/chat/completions HTTP/1.1" 200 -
+ * Detected change in '/Users/sgw/Documents/zeta/llm/vector/src/base.py', reloading
+<t>0.7885<t>共享平台如何使用<t>暂无法处理您的问题，请联系人工客服进行咨询。
+ * Restarting with stat
+加载模型... * Debugger is active!
+ * Debugger PIN: 383-682-614
+ * Detected change in '/Users/sgw/Documents/zeta/llm/vector/openai.py', reloading
+
+加载模型完成: 0.7243001461029053 seconds
+Loading index from file...
+ * Restarting with stat
+加载模型.../opt/homebrew/Caskroom/miniforge/base/envs/py311/lib/python3.11/multiprocessing/resource_tracker.py:254: UserWarning: resource_tracker: There appear to be 1 leaked semaphore objects to clean up at shutdown
+  warnings.warn('resource_tracker: There appear to be %d '
+加载模型...
+加载模型完成: 0.260761022567749 seconds
+Loading index from file...
+ * Serving Flask app 'openai'
+ * Debug mode: off
+[31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:8000
+ * Running on http://192.168.31.104:8000
+[33mPress CTRL+C to quit[0m
+192.168.31.104 - - [17/Feb/2025 17:13:23] "POST /v1/chat/completions HTTP/1.1" 200 -
+192.168.31.104 - - [17/Feb/2025 17:13:27] "POST /v1/chat/completions HTTP/1.1" 200 -
+加载模型...
+加载模型完成: 0.9041693210601807 seconds
+Loading index from file...
+ * Serving Flask app 'openai'
+ * Debug mode: off
+[31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:8000
+ * Running on http://192.168.31.104:8000
+[33mPress CTRL+C to quit[0m
+<t>0.7885<t>共享平台如何使用<t>暂无法处理您的问题，请联系人工客服进行咨询。
+192.168.31.104 - - [17/Feb/2025 17:13:54] "POST /v1/chat/completions HTTP/1.1" 200 -
+<t>0.7885<t>共享平台如何使用<t>暂无法处理您的问题，请联系人工客服进行咨询。
+192.168.31.104 - - [17/Feb/2025 17:13:56] "POST /v1/chat/completions HTTP/1.1" 200 -
+<t>0.7885<t>共享平台如何使用<t>暂无法处理您的问题，请联系人工客服进行咨询。
+192.168.31.104 - - [17/Feb/2025 17:13:57] "POST /v1/chat/completions HTTP/1.1" 200 -
