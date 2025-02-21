@@ -27,14 +27,15 @@ elif torch.cuda.is_available():
 else:
     device = torch.device("cpu")
 # device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-tokenizer = BertTokenizer.from_pretrained("./model")
-model = BertModel.from_pretrained("./model").to(device)
+tokenizer = BertTokenizer.from_pretrained("./sentence_model")
+model = BertModel.from_pretrained("./sentence_model").to(device)
 model.eval()
 end = time.time()
 logging.info("加载模型完成:{}".format(end - start))
 
-
-d = 768
+# d = 768
+print( model.config.hidden_size)
+d = model.config.hidden_size
 def cal_token(text):
     return len(tokenizer.tokenize(text))
 
@@ -48,6 +49,7 @@ def vectorize():
     # 2. 对问题进行编码和向量化
     start = time.time()
     question_length = len(question_list)
+    duplicate_list = []
     
     for idx, questions in enumerate(question_list):
         vectors = []
@@ -65,14 +67,21 @@ def vectorize():
                 vector = torch.mean(outputs.last_hidden_state, dim=1).cpu().numpy()
                 vectors.append(vector)
         min_distance, index = index_with_ids.search(np.vstack(vectors), 1)
-        if cal_similarity(min_distance[0][0]) > 0.5:
-          logging.error(f"太过相似: {cal_similarity(min_distance[0][0])}:{index[0][0]}:{question}:{question_list[index[0][0]]['question'][0]}")
+        if cal_similarity(min_distance[0][0]) > 0.93:
+            duplicate_list.append([cal_similarity(min_distance[0][0]),question,questions['reporter'],{question_list[index[0][0]]['question'][0]},question_list[index[0][0]]['reporter']])
+          
+          # logging.error(f"太过相似: {cal_similarity(min_distance[0][0])}:{index[0][0]}:{question}:{question_list[index[0][0]]['question'][0]}")
         index_with_ids.add_with_ids(np.vstack(vectors), np.full(len(vectors), idx))
         
         
     end = time.time()
 
     logging.info("\n向量化:{} seconds".format(end - start))
+    duplicate_list.sort(key=lambda x: x[0], reverse=True)
+    with open("./duplicate.jsonl", "w") as f:
+        for duplicate in duplicate_list:
+            f.write(str(duplicate) + "\n")
+        f.close()
 
     logging.info(index_with_ids.ntotal)
     return index_with_ids
