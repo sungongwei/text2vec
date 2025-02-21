@@ -67,7 +67,7 @@ def vectorize():
                 vector = torch.mean(outputs.last_hidden_state, dim=1).cpu().numpy()
                 vectors.append(vector)
         min_distance, index = index_with_ids.search(np.vstack(vectors), 1)
-        if cal_similarity(min_distance[0][0]) > 0.93:
+        if cal_similarity(min_distance[0][0]) > 0.95:
             duplicate_list.append([cal_similarity(min_distance[0][0]),question,questions['reporter'],{question_list[index[0][0]]['question'][0]},question_list[index[0][0]]['reporter']])
           
           # logging.error(f"太过相似: {cal_similarity(min_distance[0][0])}:{index[0][0]}:{question}:{question_list[index[0][0]]['question'][0]}")
