@@ -11,3 +11,6 @@ fastchat-cp39
 train
 duplicate.jsonl
 sentence_model
+text2vec
+sentence_model2
+*.index

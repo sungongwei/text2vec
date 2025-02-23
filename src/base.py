@@ -17,7 +17,7 @@ with open("config.json") as f:
 question_list = merge_json_files("./data")
 
 logging.info(f"加载模型...")
-
+model_path ="sentence_model"
 # 初始化Bert模型和tokenizer
 start = time.time()
 if torch.backends.mps.is_available():
@@ -27,8 +27,8 @@ elif torch.cuda.is_available():
 else:
     device = torch.device("cpu")
 # device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-tokenizer = BertTokenizer.from_pretrained("./sentence_model")
-model = BertModel.from_pretrained("./sentence_model").to(device)
+tokenizer = BertTokenizer.from_pretrained(model_path)
+model = BertModel.from_pretrained(model_path).to(device)
 model.eval()
 end = time.time()
 logging.info("加载模型完成:{}".format(end - start))
@@ -67,7 +67,7 @@ def vectorize():
                 vector = torch.mean(outputs.last_hidden_state, dim=1).cpu().numpy()
                 vectors.append(vector)
         min_distance, index = index_with_ids.search(np.vstack(vectors), 1)
-        if cal_similarity(min_distance[0][0]) > 0.95:
+        if cal_similarity(min_distance[0][0]) > 0.90:
             duplicate_list.append([cal_similarity(min_distance[0][0]),question,questions['reporter'],{question_list[index[0][0]]['question'][0]},question_list[index[0][0]]['reporter']])
           
           # logging.error(f"太过相似: {cal_similarity(min_distance[0][0])}:{index[0][0]}:{question}:{question_list[index[0][0]]['question'][0]}")
@@ -87,7 +87,7 @@ def vectorize():
     return index_with_ids
 
 
-index_path = "faiss.index"
+index_path = model_path +".index"
 # 检查索引文件是否存在
 if os.path.exists(index_path):
     # 如果文件存在，则加载本地索引
