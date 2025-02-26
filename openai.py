@@ -1,4 +1,5 @@
 from datetime import datetime
+import traceback
 import uuid
 import json
 
@@ -56,8 +57,12 @@ def chat_completions():
         response_data = generate_response(messages)
         return Response(json.dumps(response_data), mimetype='application/json')
     except Exception as e:
+        traceback.print_exc()
         return jsonify({"error": str(e)}), 500
 
+@app.route('/v1', methods=['GET'])
+def get_api_version():
+    return jsonify({"openai_version": "1.0.0"})
 
 if __name__ == '__main__':
     app.run(debug=False,host="0.0.0.0",port=8000)
