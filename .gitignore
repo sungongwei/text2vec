@@ -12,3 +12,4 @@ text2vec
 *model/
 
 test/
+ernie-3.0-base-zh/
