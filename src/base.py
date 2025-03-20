@@ -1,6 +1,7 @@
 import torch
 from transformers import BertTokenizer, BertModel
 import numpy as np
+import re
 import json
 import time
 import faiss
@@ -104,6 +105,7 @@ else:
 def similarity_to_distance(similar):
     return d * (1 - similar)
 def answer_question(user_input):
+    user_input = re.sub(r'<[^>]+>', '', user_input)
     start = time.time()
     user_inputs = tokenizer(
         user_input, return_tensors="pt", max_length=512, padding=True, truncation=True
